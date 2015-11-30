@@ -11,6 +11,7 @@
 #import <UIKit/UIKit.h>
 
 #import "CountdownView.h"
+#import "UIView+React.h"
 
 @implementation CountdownViewManager
 
@@ -18,7 +19,15 @@ RCT_EXPORT_MODULE()
 
 - (UIView *)view
 {
-  return [[CountdownView alloc] initWithFrame:CGRectMake(0, 0, 300, 300)];
+  return [[CountdownView alloc] init];
 }
+
+RCT_EXPORT_VIEW_PROPERTY(time, float)
+RCT_EXPORT_VIEW_PROPERTY(radius, CGFloat)
+RCT_EXPORT_VIEW_PROPERTY(fillColor, UIColor)
+RCT_EXPORT_VIEW_PROPERTY(fillAlpha, float)
+RCT_EXPORT_VIEW_PROPERTY(strokeColor, UIColor)
+RCT_EXPORT_VIEW_PROPERTY(onTimerUpdate, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onTimerCompleted, RCTBubblingEventBlock)
 
 @end

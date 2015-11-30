@@ -7,12 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "RCTComponent.h"
 
 @interface CountdownView : UIView
 
-@property (nonatomic) CGFloat progress;
+@property (nonatomic, copy) RCTBubblingEventBlock onTimerUpdate;
+@property (nonatomic, copy) RCTBubblingEventBlock onTimerCompleted;
+
+@property (nonatomic) float time;
 @property (nonatomic) CGFloat radius;
 @property (strong, nonatomic) UIColor *fillColor;
+@property (nonatomic) float fillAlpha;
 @property (strong, nonatomic) UIColor *strokeColor;
 
 @end

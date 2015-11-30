@@ -11,52 +11,116 @@
 @interface CountdownView ()
 
 @property (strong, nonatomic) CAShapeLayer *circleLayer;
+@property (strong, nonatomic) UILabel *timerLabel;
+@property (strong, nonatomic) NSTimer *timer;
+@property (nonatomic) float timeLeft;
 
 @end
 
 @implementation CountdownView
 
-- (instancetype)init
+- (CAShapeLayer *)circleLayer
 {
-  self = [super init];
-  if (self) {
-    self.radius = 50.0;
-    self.frame = [self circleFrame];
-    [self configure];
+  if (!_circleLayer) {
+    _circleLayer = [[CAShapeLayer alloc] init];
   }
-  return self;
+  return _circleLayer;
 }
 
-- (instancetype)initWithCoder:(NSCoder *)aDecoder
+- (UILabel *)timerLabel
 {
-  self = [super initWithCoder:aDecoder];
-  if (self) {
-    self.radius = 50.0;
-    self.frame = [self circleFrame];
-    [self configure];
+  if (!_timerLabel) {
+    _timerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))];
   }
-  return self;
+  return _timerLabel;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame
+- (void)setTime:(float)time
 {
-  self = [super initWithFrame:frame];
-  if (self) {
-    self.radius = 50.0;
-    self.frame = [self circleFrame];
-    [self configure];
+  _time = time;
+  self.timeLeft = _time;
+  if (!self.timer) {
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(updateTimer:) userInfo:nil repeats:YES];
   }
-  return self;
+}
+
+- (void)setTimeLeft:(float)timeLeft
+{
+  _timeLeft = timeLeft;
+  self.timerLabel.text = [NSString stringWithFormat:@"%.0f", _timeLeft];
+  self.circleLayer.strokeEnd = (self.time - self.timeLeft) / self.time;
+}
+
+- (void)updateTimer:(NSTimer *)timer
+{
+  if (self.timeLeft < 0.1) {
+    self.timeLeft = 0;
+    [self.timer invalidate];
+    
+    if (self.onTimerCompleted) {
+      self.onTimerCompleted(@{@"timeLeft": @(self.timeLeft) });
+    }
+    return;
+  }
+  
+  if (self.onTimerUpdate) {
+    self.onTimerUpdate(@{@"timeLeft": @(self.timeLeft) });
+  }
+  
+  self.timeLeft -= 0.1;
+}
+
+- (void)setFillAlpha:(float)fillAlpha
+{
+  _fillAlpha = fillAlpha;
+  self.circleLayer.fillColor = [self.fillColor colorWithAlphaComponent:_fillAlpha].CGColor;
+}
+
+- (void)setFillColor:(UIColor *)fillColor
+{
+  _fillColor = fillColor;
+  self.circleLayer.fillColor = [_fillColor colorWithAlphaComponent:self.fillAlpha].CGColor;
+}
+
+- (void)setStrokeColor:(UIColor *)strokeColor
+{
+  _strokeColor = strokeColor;
+  self.circleLayer.strokeColor = _strokeColor.CGColor;
 }
 
 - (void)configure
 {
-  self.circleLayer = [[CAShapeLayer alloc] init];
   self.circleLayer.frame = self.bounds;
   self.circleLayer.lineWidth = 2;
-  self.circleLayer.fillColor = [UIColor whiteColor].CGColor;
-  self.circleLayer.strokeColor = [UIColor redColor].CGColor;
-  [self.layer addSublayer:self.circleLayer];
+  if (!self.circleLayer.superlayer) {
+    [self.layer addSublayer:self.circleLayer];
+  }
+  
+  [self configureTimerLabel];
+}
+
+- (void)configureTimerLabel
+{
+  self.timerLabel.textColor = [UIColor whiteColor];
+  self.timerLabel.textAlignment = NSTextAlignmentCenter;
+  self.timerLabel.font = [UIFont fontWithName:@"Helvetica" size:10.0];
+  self.timerLabel.translatesAutoresizingMaskIntoConstraints = NO;
+  [self addSubview:self.timerLabel];
+  
+  [self addConstraint:[NSLayoutConstraint constraintWithItem:self
+                                                   attribute:NSLayoutAttributeCenterX
+                                                   relatedBy:NSLayoutRelationEqual
+                                                      toItem:self.timerLabel
+                                                   attribute:NSLayoutAttributeCenterX
+                                                  multiplier:1.0
+                                                    constant:0.0]];
+  [self addConstraint:[NSLayoutConstraint constraintWithItem:self
+                                                   attribute:NSLayoutAttributeCenterY
+                                                   relatedBy:NSLayoutRelationEqual
+                                                      toItem:self.timerLabel
+                                                   attribute:NSLayoutAttributeCenterY
+                                                  multiplier:1.0
+                                                    constant:0.0]];
 }
 
 - (CGRect)circleFrame
@@ -76,6 +140,7 @@
 {
   [super layoutSubviews];
   self.circleLayer.frame = self.bounds;
+  [self configure];
   self.circleLayer.path = [[self circlePath] CGPath];
 }
 
