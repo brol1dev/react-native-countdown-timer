@@ -11,11 +11,7 @@
   	"ios"
   ],
   "version": "0.0.1",
-  "private": true,
-  "scripts": {
-    "start": "react-native start"
-  },
-  "dependencies": {
+  "peerDependencies": {
     "react-native": "^0.14.2"
   }
 }

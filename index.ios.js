@@ -11,6 +11,7 @@ var {
   Text,
   View,
 } = React;
+var CountdownView = require('./countdown-timer');
 
 var ReactNativeCountdownTimer = React.createClass({
   render: function() {
@@ -19,13 +20,7 @@ var ReactNativeCountdownTimer = React.createClass({
         <Text style={styles.welcome}>
           Welcome to React Native!
         </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
-        </Text>
+        <CountdownView style={styles.countdown} />
       </View>
     );
   }
@@ -43,11 +38,11 @@ var styles = StyleSheet.create({
     textAlign: 'center',
     margin: 10,
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+  countdown: {
+    marginTop: 20,
+    width: 100,
+    height: 50,
+  }
 });
 
 AppRegistry.registerComponent('ReactNativeCountdownTimer', () => ReactNativeCountdownTimer);
