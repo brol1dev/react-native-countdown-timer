@@ -136,6 +136,33 @@
   return [UIBezierPath bezierPathWithOvalInRect:[self circleFrame]];
 }
 
+- (void)removeCircleLayer
+{
+  [self.circleLayer removeAnimationForKey:@"strokeEnd"];
+  [self.circleLayer removeFromSuperlayer];
+}
+
+- (void)viewTapped:(UITapGestureRecognizer *)sender
+{
+  if (sender.state == UIGestureRecognizerStateEnded) {
+    if (self.tapCancel) {
+      [self removeCircleLayer];
+      [self.timer invalidate];
+    }
+    
+    if (self.onPress) {
+      self.onPress(@{@"timeLeft": @(self.timeLeft)});
+    }
+  }
+}
+
+- (void)didMoveToWindow
+{
+  [super didMoveToWindow];
+  UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
+  [self addGestureRecognizer:tapGesture];
+}
+
 - (void)layoutSubviews
 {
   [super layoutSubviews];

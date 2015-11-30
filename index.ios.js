@@ -20,12 +20,7 @@ var ReactNativeCountdownTimer = React.createClass({
         <Text style={styles.welcome}>
           Welcome to React Native!
         </Text>
-        <CountdownView style={styles.countdown}
-          time={10}
-          radius={10.0}
-          fillColor={'#000000'}
-          fillAlpha={0.7}
-          strokeColor={'#ff0000'} />
+        <CountdownView style={styles.countdown} />
       </View>
     );
   }
@@ -36,7 +31,7 @@ var styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    backgroundColor: '#000000',
   },
   welcome: {
     fontSize: 20,
